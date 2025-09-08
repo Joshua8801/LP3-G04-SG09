@@ -1,0 +1,31 @@
+package app;
+
+import model.habitaciones.Habitacion;
+import gestor.GestorDisponibilidadHabitacion;
+import model.servicios.*;
+
+public class Main {
+    public static void main(String[] args) {
+        GestorDisponibilidadHabitacion gestor = new GestorDisponibilidadHabitacion();
+
+        Habitacion habitacionIndividual = new Habitacion("101", "Individual", 100.0, gestor);
+        Habitacion habitacionDoble = new Habitacion("102", "Doble", 150.0, gestor);
+        Habitacion habitacionSuite = new Habitacion("103", "Suite", 250.0, gestor);
+
+        ServicioLimpieza limpieza = new Limpieza();
+        ServicioComida comida = new Comida();
+        ServicioLavanderia lavanderia = new Lavanderia();
+
+        System.out.println("Servicios para habitación individual:");
+        limpieza.solicitarLimpieza();
+
+        System.out.println("\nServicios para habitación doble:");
+        limpieza.solicitarLimpieza();
+        comida.solicitarComida();
+
+        System.out.println("\nServicios para habitación suite:");
+        limpieza.solicitarLimpieza();
+        comida.solicitarComida();
+        lavanderia.solicitarLavanderia();
+    }
+}

@@ -1,0 +1,8 @@
+package model.servicios;
+
+public class ServicioHabitacion {
+	public interface ServicioLimpieza {
+	    void solicitarLimpieza();
+	}
+
+}

@@ -1,0 +1,13 @@
+package gestor;
+
+import model.habitaciones.Habitacionpadre;
+public class GestorEstadoHabitacion {
+
+    public void marcarReservada(Habitacionpadre habitacion) {
+        habitacion.setDisponible(false);
+    }
+
+    public void marcarDisponible(Habitacionpadre habitacion) {
+        habitacion.setDisponible(true);
+    }
+}

@@ -1,0 +1,94 @@
+package app;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import gestor.GestorDisponibilidadHabitacion;
+import gestor.GestorEstadoHabitacion;
+import model.Cliente;
+import model.Habitacion;
+import model.Reserva;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Lista de reservas (se comparte con el gestor de disponibilidad)
+        List<Reserva> reservas = new ArrayList<>();
+        GestorDisponibilidadHabitacion gestorDisp = new GestorDisponibilidadHabitacion(reservas);
+        GestorEstadoHabitacion gestorEstado = new GestorEstadoHabitacion();
+
+        // Crear cliente
+        System.out.print("Ingrese nombre del cliente: ");
+        String nombre = sc.nextLine();
+        System.out.print("Ingrese contacto del cliente: ");
+        String contacto = sc.nextLine();
+        Cliente cliente = new Cliente(nombre, contacto);
+
+        // Crear habitación
+        Habitacion hab1 = new Habitacion("101", "Simple", 100.0, gestorDisp);
+
+        int opcion;
+        do {
+            System.out.println("\n===== MENÚ HOTEL =====");
+            System.out.println("1. Verificar disponibilidad");
+            System.out.println("2. Reservar habitación");
+            System.out.println("3. Mostrar reservas");
+            System.out.println("0. Salir");
+            System.out.print("Seleccione opción: ");
+            opcion = sc.nextInt();
+            sc.nextLine(); // limpiar buffer
+
+            switch (opcion) {
+                case 1:
+                    System.out.print("Fecha inicio (YYYY-MM-DD): ");
+                    String inicio = sc.nextLine();
+                    System.out.print("Fecha fin (YYYY-MM-DD): ");
+                    String fin = sc.nextLine();
+                    boolean disponible = hab1.verificarDisponibilidad(inicio, fin);
+                    System.out.println(disponible ? "Habitación DISPONIBLE" : "Habitación NO disponible");
+                    break;
+
+                case 2:
+                    System.out.print("Fecha inicio (YYYY-MM-DD): ");
+                    String fi = sc.nextLine();
+                    System.out.print("Fecha fin (YYYY-MM-DD): ");
+                    String ff = sc.nextLine();
+
+                    if (hab1.verificarDisponibilidad(fi, ff)) {
+                        Reserva r = new Reserva(hab1, fi, ff);
+                        reservas.add(r);
+                        gestorEstado.marcarReservada(hab1);
+                        System.out.println("Reserva realizada con éxito para " + cliente.getNombre());
+                    } else {
+                        System.out.println("No se pudo reservar, habitación ocupada.");
+                    }
+                    break;
+
+                case 3:
+                    if (reservas.isEmpty()) {
+                        System.out.println("No hay reservas registradas.");
+                    } else {
+                        System.out.println("=== Reservas ===");
+                        for (Reserva r : reservas) {
+                            System.out.println("Habitación " + r.getHabitacion().getNumero() +
+                                    " | Inicio: " + r.getFechaInicio() +
+                                    " | Fin: " + r.getFechaFin());
+                        }
+                    }
+                    break;
+
+                case 0:
+                    System.out.println("Saliendo del sistema...");
+                    break;
+
+                default:
+                    System.out.println("Opción no válida.");
+            }
+
+        } while (opcion != 0);
+
+        sc.close();
+    }
+}

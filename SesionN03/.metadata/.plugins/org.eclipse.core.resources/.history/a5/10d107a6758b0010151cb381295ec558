@@ -1,0 +1,37 @@
+package app;
+
+import java.util.ArrayList;
+import java.util.List;
+import model.Habitacion;
+import model.Reserva;
+import gestor.GestorDisponibilidadHabitacion;
+
+public class Main {
+    public static void main(String[] args) {
+        List<Reserva> reservas = new ArrayList<>();
+        GestorDisponibilidadHabitacion gestorDisp = new GestorDisponibilidadHabitacion(reservas);
+
+        Habitacion hab1 = new Habitacion("101", "Doble", 150.0, gestorDisp);
+
+        // Verificar disponibilidad antes de reservar
+        boolean disponible = hab1.verificarDisponibilidad("2025-09-10", "2025-09-12");
+        System.out.println("¿Habitación disponible? " + disponible);
+
+        // Crear una reserva
+        Reserva r1 = new Reserva(hab1, "2025-09-10", "2025-09-12");
+        reservas.add(r1);
+        gestorDisp.marcarReservada(hab1);
+
+        // Verificar disponibilidad despues de reservar
+        disponible = hab1.verificarDisponibilidad("2025-09-10", "2025-09-12");
+        System.out.println("¿Habitación disponible tras reserva? " + disponible);
+
+        // Liberar habitacion (check-out)
+        gestorDisp.marcarDisponible(hab1);
+        reservas.remove(r1);
+
+        // Verificar disponibilidad despues del check-out
+        disponible = hab1.verificarDisponibilidad("2025-09-10", "2025-09-12");
+        System.out.println("¿Habitación disponible tras check-out? " + disponible);
+    }
+}

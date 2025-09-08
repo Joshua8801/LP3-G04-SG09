@@ -1,0 +1,23 @@
+package gestor;
+
+import java.util.List;
+import model.habitaciones.Habitacion;
+import model.Reserva;
+
+public class GestorDisponibilidadHabitacion {
+
+    private List<Reserva> reservas;
+
+    public GestorDisponibilidadHabitacion(List<Reserva> reservas) {
+        this.reservas = reservas;
+    }
+
+    public boolean verificarDisponibilidad(Habitacion habitacion, String fechaInicio, String fechaFin) {
+        for (Reserva r : reservas) {
+            if (r.getHabitacion().equals(habitacion) && r.seTraslapaCon(fechaInicio, fechaFin)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}

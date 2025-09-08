@@ -1,0 +1,5 @@
+package model.habitaciones;
+
+public class HabitacionDoble {
+
+}

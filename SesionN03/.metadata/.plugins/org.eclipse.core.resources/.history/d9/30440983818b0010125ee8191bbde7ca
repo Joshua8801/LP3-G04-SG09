@@ -1,0 +1,11 @@
+package model.habitaciones;
+
+import gestor.GestorDisponibilidadHabitacion;
+import model.habitaciones.Habitacion;
+
+public class HabitacionDoble extends Habitacion {
+    public HabitacionDoble(String numero, double precio, GestorDisponibilidadHabitacion gestorDisponibilidad) {
+        super(numero, "Doble", precio, gestorDisponibilidad);
+    }
+}
+

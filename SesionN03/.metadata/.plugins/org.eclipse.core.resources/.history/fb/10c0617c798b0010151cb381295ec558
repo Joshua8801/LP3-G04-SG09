@@ -1,0 +1,5 @@
+package model.politicas;
+
+public class PoliticaFlexible {
+
+}
