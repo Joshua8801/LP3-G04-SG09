@@ -1,0 +1,43 @@
+package ejercicio2;
+
+public class Par<F, S> {
+    private F primero;
+    private S segundo;
+
+    // Constructor
+    public Par(F primero, S segundo) {
+        this.primero = primero;
+        this.segundo = segundo;
+    }
+
+    // Getters
+    public F getPrimero() {
+        return primero;
+    }
+
+    public S getSegundo() {
+        return segundo;
+    }
+
+    // Setters
+    public void setPrimero(F primero) {
+        this.primero = primero;
+    }
+
+    public void setSegundo(S segundo) {
+        this.segundo = segundo;
+    }
+
+    // Método esIgual: compara con otro par
+    public boolean esIgual(Par<F, S> otro) {
+        if (otro == null) return false;
+        return (this.primero == null ? otro.primero == null : this.primero.equals(otro.primero))
+            && (this.segundo == null ? otro.segundo == null : this.segundo.equals(otro.segundo));
+    }
+
+    // Representación en String
+    @Override
+    public String toString() {
+        return "(Primero: " + primero + ", Segundo: " + segundo + ")";
+    }
+}

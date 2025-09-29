@@ -1,0 +1,23 @@
+package actividad4;
+
+public class Main {
+    public static void main(String[] args) {
+        Pila<String> pila1 = new Pila<>();
+        Pila<String> pila2 = new Pila<>();
+
+        pila1.push("A");
+        pila1.push("B");
+        pila1.push("C");
+
+        pila2.push("A");
+        pila2.push("B");
+        pila2.push("C");
+
+        System.out.println("¿Son iguales? " + pila1.esIgual(pila2)); // true
+
+        pila2.pop();
+        pila2.push("D");
+
+        System.out.println("¿Son iguales después del cambio? " + pila1.esIgual(pila2)); // false
+    }
+}

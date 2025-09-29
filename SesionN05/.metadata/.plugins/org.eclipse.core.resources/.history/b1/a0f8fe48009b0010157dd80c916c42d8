@@ -1,0 +1,29 @@
+package actividad1;
+
+public class Main {
+    public static void main(String[] args) {
+        String[] nombres = {"Juan", "Ana", "Luis", "Carlos", "Sofía"};
+        Integer[] numeros = {10, 20, 30, 40, 50};
+
+        // Usando el método genérico normal
+        System.out.println("Arreglo completo:");
+        Funciones.imprimirArreglo(nombres);
+        Funciones.imprimirArreglo(numeros);
+
+        // Usando el método sobrecargado
+        try {
+            System.out.println("Subarreglo:");
+            int cantidad = Funciones.imprimirArreglo(nombres, 1, 3);
+            System.out.println("Cantidad de elementos impresos: " + cantidad);
+        } catch (InvalidSubscriptException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        // Ejemplo con error
+        try {
+            Funciones.imprimirArreglo(numeros, 4, 2); // Esto lanza excepción
+        } catch (InvalidSubscriptException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}

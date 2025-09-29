@@ -1,0 +1,14 @@
+package actividad3;
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Integer vs Integer: " + IgualGenerico.esIgualA(5, 5)); // true
+        System.out.println("String vs String: " + IgualGenerico.esIgualA("hola", "hola")); // true
+        System.out.println("String vs Integer: " + IgualGenerico.esIgualA("5", 5)); // false
+        System.out.println("null vs null: " + IgualGenerico.esIgualA(null, null)); // true
+        System.out.println("null vs Object: " + IgualGenerico.esIgualA(null, new Object())); // false
+        System.out.println("Object vs Object: " + IgualGenerico.esIgualA(new Object(), new Object())); // false
+        System.out.println("Integer vs Object: " + IgualGenerico.esIgualA(5, new Object())); // false
+    }
+}
+

@@ -1,0 +1,21 @@
+package ejercicio1;
+
+public class Main {
+    public static void main(String[] args) {
+        // Crear un par con tipos String e Integer
+        Par<String, Integer> par1 = new Par<>("Edad", 25);
+        System.out.println(par1);
+
+        // Crear un par con tipos Double y String
+        Par<Double, String> par2 = new Par<>(3.14, "Pi");
+        System.out.println(par2);
+
+        // Modificar valores
+        par1.setSegundo(26);
+        System.out.println("Después de modificar: " + par1);
+
+        // Acceder a valores individuales
+        System.out.println("Primero de par2: " + par2.getPrimero());
+        System.out.println("Segundo de par2: " + par2.getSegundo());
+    }
+}
