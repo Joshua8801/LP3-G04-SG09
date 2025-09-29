@@ -1,9 +1,0 @@
-INDEX VERSION 1.134+C:\Users\joshu\Documents\Joshua\SEMESTRE PAR 2025\LP 3\Sesion_03\.metadata\.plugins\org.eclipse.jdt.core
-2198077854.index
-1865797976.index
-2588818922.index
-1745340918.index
-648169927.index
-1013297673.index
-1071350330.index
-348111208.index

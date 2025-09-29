@@ -1,5 +1,0 @@
-package model.servicios;
-
-public interface ServicioHabitacion {
-
-}
