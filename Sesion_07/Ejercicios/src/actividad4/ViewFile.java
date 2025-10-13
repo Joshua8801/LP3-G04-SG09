@@ -1,0 +1,16 @@
+package actividad4;
+
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+
+public class ViewFile extends JFrame {
+    private JTextArea areaTexto;
+
+    public ViewFile(String contenido) {
+        super("Mostrando el contenido de un archivo");
+        areaTexto = new JTextArea(10, 30);
+        areaTexto.setText(contenido);
+        add(areaTexto);
+    }
+}
+

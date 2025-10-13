@@ -1,0 +1,158 @@
+package ejercicio1y2;
+
+import java.io.*;
+import java.util.*;
+
+public class Gestor {
+    private List<Personaje> personajes;
+    private final String archivo = "personajes.txt";
+
+    public Gestor() {
+        personajes = new ArrayList<>();
+        cargarDesdeArchivo();
+    }
+
+    private void cargarDesdeArchivo() {
+        personajes.clear();
+        File file = new File(archivo);
+        if (!file.exists()) return;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(",");
+                if (datos.length == 6) {
+                    Personaje p = new Personaje(
+                        datos[0],
+                        Integer.parseInt(datos[1]),
+                        Integer.parseInt(datos[2]),
+                        Integer.parseInt(datos[3]),
+                        Integer.parseInt(datos[4])
+                    );
+                    
+                    int nivelArchivo = Integer.parseInt(datos[5]);
+                    while (p.getNivel() < nivelArchivo) {
+                        p.subirNivel();
+                    }
+                    personajes.add(p);
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            System.err.println("Error al cargar los personajes: " + e.getMessage());
+        }
+    }
+
+    public void guardarEnArchivo() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivo))) {
+            for (Personaje p : personajes) {
+                bw.write(p.toString());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error al guardar los personajes: " + e.getMessage());
+        }
+    }
+
+    public void agregar(Personaje p) {
+        personajes.add(p);
+        guardarEnArchivo();
+    }
+
+    public void eliminar(String nombre) {
+        boolean eliminado = personajes.removeIf(p -> p.getNombre().equalsIgnoreCase(nombre));
+        if (eliminado) {
+            guardarEnArchivo();
+            System.out.println("Personaje eliminado con éxito.");
+        } else {
+            System.out.println("No se encontró el personaje con ese nombre.");
+        }
+    }
+
+    public List<Personaje> listar() {
+        return new ArrayList<>(personajes);
+    }
+
+    public List<Personaje> filtrarPor(String atributo) {
+        List<Personaje> copia = new ArrayList<>(personajes);
+        switch (atributo.toLowerCase()) {
+            case "vida":
+                copia.sort(Comparator.comparingInt(Personaje::getVida));
+                break;
+            case "ataque":
+                copia.sort(Comparator.comparingInt(Personaje::getAtaque));
+                break;
+            case "defensa":
+                copia.sort(Comparator.comparingInt(Personaje::getDefensa));
+                break;
+            case "alcance":
+                copia.sort(Comparator.comparingInt(Personaje::getAlcance));
+                break;
+            default:
+                System.out.println("Atributo no válido. Usa: vida, ataque, defensa o alcance.");
+                break;
+        }
+        return copia;
+    }
+
+    public void cargarAleatorios() {
+        String[] nombres = {"Luna", "Drako", "Thor", "Athena", "Zeus"};
+        Random rnd = new Random();
+        for (String nombre : nombres) {
+            int vida = 50 + rnd.nextInt(51);
+            int ataque = 10 + rnd.nextInt(21);
+            int defensa = 5 + rnd.nextInt(16);
+            int alcance = 1 + rnd.nextInt(10);
+            personajes.add(new Personaje(nombre, vida, ataque, defensa, alcance));
+        }
+        guardarEnArchivo();
+    }
+
+    public void actualizarAtributo(String nombre, String atributo, int nuevoValor) {
+        for (Personaje p : personajes) {
+            if (p.getNombre().equalsIgnoreCase(nombre)) {
+                switch (atributo.toLowerCase()) {
+                    case "vida":
+                        p.setVida(nuevoValor);
+                        break;
+                    case "ataque":
+                        p.setAtaque(nuevoValor);
+                        break;
+                    case "defensa":
+                        p.setDefensa(nuevoValor);
+                        break;
+                    case "alcance":
+                        p.setAlcance(nuevoValor);
+                        break;
+                    default:
+                        System.out.println("Atributo inválido. Usa: vida, ataque, defensa o alcance.");
+                        return;
+                }
+                guardarEnArchivo();
+                System.out.println("Atributo actualizado correctamente.");
+                return;
+            }
+        }
+        System.out.println("Personaje no encontrado.");
+    }
+
+    public void mostrarEstadisticas() {
+        if (personajes.isEmpty()) {
+            System.out.println("No hay personajes registrados.");
+            return;
+        }
+
+        int total = personajes.size();
+        double sumaVida = 0, sumaAtaque = 0, sumaDefensa = 0, sumaAlcance = 0;
+
+        for (Personaje p : personajes) {
+            sumaVida += p.getVida();
+            sumaAtaque += p.getAtaque();
+            sumaDefensa += p.getDefensa();
+            sumaAlcance += p.getAlcance();
+        }
+
+        System.out.println("Total de personajes: " + total);
+        System.out.printf("Promedio Vida: %.2f | Ataque: %.2f | Defensa: %.2f | Alcance: %.2f%n",
+                sumaVida / total, sumaAtaque / total, sumaDefensa / total, sumaAlcance / total);
+    }
+}

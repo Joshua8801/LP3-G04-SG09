@@ -1,0 +1,27 @@
+package actividades;
+
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
+
+public class actividad_4_ViewFile extends JFrame {
+    private JTextArea areaTexto;
+
+    public actividad_4_ViewFile(String contenido) {
+        super("Mostrando el contenido de un archivo");
+        
+        areaTexto = new JTextArea(10, 30);
+        areaTexto.setText(contenido);
+        areaTexto.setEditable(false); // opcional: evita edición del texto
+
+        // Añadimos un JScrollPane para permitir desplazamiento
+        JScrollPane scroll = new JScrollPane(areaTexto);
+        add(scroll);
+
+        // Configuración básica de la ventana
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        pack(); // ajusta el tamaño automáticamente
+        setLocationRelativeTo(null); // centra la ventana en pantalla
+        setVisible(true);
+    }
+}

@@ -1,0 +1,63 @@
+package ejercicio3;
+
+import java.io.*;
+import java.util.*;
+
+public class EmpleadoController {
+    private final String archivo = "empleados.txt";
+
+    public List<Empleado> leerEmpleados() {
+        List<Empleado> empleados = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(",");
+                int num = Integer.parseInt(datos[0]);
+                String nom = datos[1];
+                double sueldo = Double.parseDouble(datos[2]);
+                empleados.add(new Empleado(num, nom, sueldo));
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Archivo no encontrado. Se creará al agregar un empleado.");
+        } catch (IOException e) {
+            System.out.println("Error leyendo el archivo: " + e.getMessage());
+        }
+        return empleados;
+    }
+
+    public void agregarEmpleado(Empleado e) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivo, true))) {
+            bw.write(e.getNumero() + "," + e.getNombre() + "," + e.getSueldo());
+            bw.newLine();
+            System.out.println("Empleado agregado exitosamente.");
+        } catch (IOException ex) {
+            System.out.println("Error al escribir el archivo: " + ex.getMessage());
+        }
+    }
+
+    public Empleado buscarEmpleado(int numero) {
+        for (Empleado e : leerEmpleados()) {
+            if (e.getNumero() == numero)
+                return e;
+        }
+        return null;
+    }
+
+    public void eliminarEmpleado(int numero) {
+        List<Empleado> empleados = leerEmpleados();
+        boolean eliminado = empleados.removeIf(e -> e.getNumero() == numero);
+        if (eliminado) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivo))) {
+                for (Empleado e : empleados) {
+                    bw.write(e.getNumero() + "," + e.getNombre() + "," + e.getSueldo());
+                    bw.newLine();
+                }
+                System.out.println("Empleado eliminado correctamente.");
+            } catch (IOException e) {
+                System.out.println("Error actualizando archivo: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Empleado no encontrado.");
+        }
+    }
+}
