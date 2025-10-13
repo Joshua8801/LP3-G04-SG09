@@ -1,0 +1,126 @@
+package ejercicio1;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CarritoControlador {
+    private List<Producto> catalogo;
+    private Carrito carrito;
+    private Historial historial;
+    private CarritoVista vista;
+
+    public CarritoControlador(List<Producto> catalogo, Carrito carrito, Historial historial, CarritoVista vista) {
+        this.catalogo = catalogo;
+        this.carrito = carrito;
+        this.historial = historial;
+        this.vista = vista;
+    }
+
+    public void iniciar() {
+        String opcion;
+        do {
+            vista.mostrarMenu();
+            opcion = vista.leerTexto();
+            switch (opcion) {
+                case "1":
+                    agregarProductoCatalogo();
+                    break;
+                case "2":
+                    vista.mostrarProductos(catalogo);
+                    break;
+                case "3":
+                    agregarProductoAlCarrito();
+                    break;
+                case "4":
+                    vista.mostrarCarrito(carrito.getProductos());
+                    break;
+                case "5":
+                    eliminarDelCarrito();
+                    break;
+                case "6":
+                    aplicarDescuento();
+                    break;
+                case "7":
+                    calcularTotal();
+                    break;
+                case "8":
+                    realizarCompra();
+                    break;
+                case "9":
+                    mostrarHistorial();
+                    break;
+                case "0":
+                    vista.mostrarMensaje("Gracias por usar el sistema. ¡Hasta pronto!");
+                    break;
+                default:
+                    vista.mostrarMensaje("Opción no válida.");
+            }
+        } while (!opcion.equals("0"));
+    }
+
+    private void agregarProductoCatalogo() {
+        vista.mostrarMensaje("Nombre del producto:");
+        String nombre = vista.leerTexto();
+        vista.mostrarMensaje("Precio del producto:");
+        double precio = vista.leerNumero();
+        catalogo.add(new Producto(nombre, precio));
+        vista.mostrarMensaje("Producto agregado al catálogo.");
+    }
+
+    private void agregarProductoAlCarrito() {
+        vista.mostrarMensaje("Nombre del producto a agregar al carrito:");
+        String nombre = vista.leerTexto();
+        for (Producto p : catalogo) {
+            if (p.getNombre().equalsIgnoreCase(nombre)) {
+                carrito.agregarProducto(p);
+                vista.mostrarMensaje("Producto agregado al carrito.");
+                return;
+            }
+        }
+        vista.mostrarMensaje("Producto no encontrado.");
+    }
+
+    private void eliminarDelCarrito() {
+        vista.mostrarMensaje("Nombre del producto a eliminar del carrito:");
+        String nombre = vista.leerTexto();
+        carrito.eliminarProducto(nombre);
+        vista.mostrarMensaje("Producto eliminado del carrito (si existía).");
+    }
+
+    private void aplicarDescuento() {
+        vista.mostrarMensaje("Porcentaje de descuento:");
+        double d = vista.leerNumero();
+        carrito.aplicarDescuento(d);
+        vista.mostrarMensaje("Descuento aplicado correctamente.");
+    }
+
+    private void calcularTotal() {
+        double total = carrito.calcularTotal();
+        vista.mostrarMensaje("Total con envío y descuento: S/ " + total);
+    }
+
+    private void realizarCompra() {
+        if (carrito.estaVacio()) {
+            vista.mostrarMensaje("El carrito está vacío. No se puede realizar la compra.");
+        } else {
+            historial.registrarCompra(new ArrayList<>(carrito.getProductos()));
+            carrito.limpiarCarrito();
+            vista.mostrarMensaje("Compra realizada con éxito y agregada al historial.");
+        }
+    }
+
+    private void mostrarHistorial() {
+        List<List<Producto>> compras = historial.getHistorial();
+        if (compras.isEmpty()) {
+            vista.mostrarMensaje("No hay compras registradas.");
+        } else {
+            int n = 1;
+            for (List<Producto> c : compras) {
+                vista.mostrarMensaje("Compra #" + n++);
+                for (Producto p : c) {
+                    System.out.println("  - " + p);
+                }
+            }
+        }
+    }
+}

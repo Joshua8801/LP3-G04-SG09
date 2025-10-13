@@ -1,0 +1,43 @@
+package ejercicio1;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Carrito {
+    private List<Producto> productos;
+    private double descuento;
+    private double envio;
+
+    public Carrito() {
+        productos = new ArrayList<>();
+        descuento = 0.0;
+        envio = 10.0;
+    }
+    public void agregarProducto(Producto p) {
+        productos.add(p);
+    }
+    public void eliminarProducto(String nombre) {
+        productos.removeIf(p -> p.getNombre().equalsIgnoreCase(nombre));
+    }
+    public List<Producto> getProductos() {
+        return productos;
+    }
+    public void aplicarDescuento(double porcentaje) {
+        descuento = porcentaje;
+    }
+
+    public double calcularTotal() {
+        double subtotal = productos.stream().mapToDouble(Producto::getPrecio).sum();
+        double totalDescuento = subtotal * (descuento / 100);
+        return (subtotal - totalDescuento) + envio;
+    }
+
+    public boolean estaVacio() {
+        return productos.isEmpty();
+    }
+
+    public void limpiarCarrito() {
+        productos.clear();
+    }
+}
+

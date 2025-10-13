@@ -1,0 +1,62 @@
+package ejercicio1;
+
+import java.util.List;
+import java.util.Scanner;
+
+public class CarritoVista {
+    private Scanner scanner;
+
+    public CarritoVista() {
+        scanner = new Scanner(System.in);
+    }
+
+    public void mostrarMenu() {
+        System.out.println("\n=== MENÚ CARRITO DE COMPRAS ===");
+        System.out.println("1. Agregar producto al catálogo");
+        System.out.println("2. Listar productos");
+        System.out.println("3. Agregar producto al carrito");
+        System.out.println("4. Ver carrito");
+        System.out.println("5. Eliminar producto del carrito");
+        System.out.println("6. Aplicar descuento");
+        System.out.println("7. Calcular total con envío");
+        System.out.println("8. Realizar compra");
+        System.out.println("9. Ver historial de compras");
+        System.out.println("0. Salir");
+        System.out.print("Selecciona una opción: ");
+    }
+
+    public String leerTexto() {
+        return scanner.nextLine();
+    }
+
+    public double leerNumero() {
+        return Double.parseDouble(scanner.nextLine());
+    }
+
+    public void mostrarProductos(List<Producto> productos) {
+        if (productos.isEmpty()) {
+            System.out.println("No hay productos disponibles.");
+        } else {
+            System.out.println("Productos disponibles:");
+            for (Producto p : productos) {
+                System.out.println("- " + p);
+            }
+        }
+    }
+
+    public void mostrarCarrito(List<Producto> carrito) {
+        if (carrito.isEmpty()) {
+            System.out.println("El carrito está vacío.");
+        } else {
+            System.out.println("Carrito de compras:");
+            for (Producto p : carrito) {
+                System.out.println("- " + p);
+            }
+        }
+    }
+
+    public void mostrarMensaje(String mensaje) {
+        System.out.println(mensaje);
+    }
+}
+

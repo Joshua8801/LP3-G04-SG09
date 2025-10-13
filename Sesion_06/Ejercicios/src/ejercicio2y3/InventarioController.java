@@ -1,0 +1,61 @@
+package ejercicio2y3;
+
+public class InventarioController {
+    private InventarioModel modelo;
+    private InventarioView vista;
+    
+    public InventarioController(InventarioModel modelo, InventarioView vista) {
+        this.modelo = modelo;
+        this.vista = vista;
+    }
+
+    public void iniciar() {
+        String opcion;
+        do {
+            vista.mostrarMenu(); 
+            opcion = vista.solicitarOpcion();
+            switch (opcion) {
+                case "1":
+                    String nombre = vista.solicitarNombreItem();
+                    int cantidad = vista.solicitarCantidadItem();
+                    String tipo = vista.solicitarTipoItem();
+                    String descripcion = vista.solicitarDescripcionItem();
+                    modelo.agregarItem(new Item(nombre, cantidad, tipo, descripcion));
+                    vista.mostrarMensaje("Item agregado correctamente.");
+                    break;
+                case "2":
+                    String nombreEliminar = vista.solicitarNombreItem();
+                    boolean eliminado = modelo.eliminarItem(nombreEliminar);
+                    if (eliminado) {
+                        vista.mostrarMensaje("Item eliminado.");
+                    } else {
+                        vista.mostrarMensaje("Item no encontrado.");
+                    }
+                    break;
+                case "3":
+                    vista.mostrarInventario(modelo.obtenerItems());
+                    break;
+                case "4":
+                    String nombreDetalles = vista.solicitarNombreItem();
+                    Item itemDetalles = modelo.buscarItem(nombreDetalles);
+                    vista.mostrarDetallesItem(itemDetalles);
+                    break;
+                case "5":
+                    String nombreBuscar = vista.solicitarNombreItem();
+                    Item itemBuscado = modelo.buscarItem(nombreBuscar);
+                    if (itemBuscado != null) {
+                        vista.mostrarMensaje("Item encontrado:");
+                        vista.mostrarDetallesItem(itemBuscado);
+                    } else {
+                        vista.mostrarMensaje("Item no encontrado.");
+                    }
+                    break;
+                case "6":
+                    vista.mostrarMensaje("Saliendo...");
+                    break;
+                default:
+                    vista.mostrarMensaje("Opción no válida.");
+            }
+        } while (!opcion.equals("6"));
+    }
+}
