@@ -1,0 +1,92 @@
+package actividad;
+
+import java.sql.*;
+
+public class Actividad {
+    public static void main(String[] args) {
+        Connection con = null;
+
+        try {
+            // 1. Cargar el driver JDBC
+            Class.forName("org.sqlite.JDBC");
+
+            // 2. Conectar a la base de datos
+            con = DriverManager.getConnection("jdbc:sqlite:actividad.db");
+            System.out.println("Base de datos conectada.");
+
+            // 3. Desactivar auto-commit para manejar transacciones
+            con.setAutoCommit(false);
+
+            // 4. INSERTAR registros con PreparedStatement
+            PreparedStatement insertStmt = con.prepareStatement("INSERT INTO persona (id, nombre, edad) VALUES (?, ?, ?)");
+            insertStmt.setInt(1, 1);
+            insertStmt.setString(2, "Joshua");
+            insertStmt.setInt(3, 19);
+            insertStmt.executeUpdate();
+
+            insertStmt.setInt(1, 2);
+            insertStmt.setString(2, "Luna");
+            insertStmt.setInt(3, 20);
+            insertStmt.executeUpdate();
+
+            System.out.println("Registros insertados.");
+
+            // 5. RECUPERAR registros
+            Statement selectStmt = con.createStatement();
+            ResultSet rs = selectStmt.executeQuery("SELECT * FROM persona");
+            System.out.println("Datos:");
+            while (rs.next()) {
+                System.out.println(rs.getInt("id") + " - " + rs.getString("nombre") + " - " + rs.getInt("edad"));
+            }
+
+            // 6. ACTUALIZAR registro
+            PreparedStatement updateStmt = con.prepareStatement("UPDATE persona SET edad = ? WHERE id = ?");
+            updateStmt.setInt(1, 30);
+            updateStmt.setInt(2, 1);
+            updateStmt.executeUpdate();
+            System.out.println("Registro actualizado.");
+          
+            Statement selectStmt = con.createStatement();
+            ResultSet rs = selectStmt.executeQuery("SELECT * FROM persona");
+            System.out.println("Datos actualizados:");
+            while (rs.next()) {
+                System.out.println(rs.getInt("id") + " - " + rs.getString("nombre") + " - " + rs.getInt("edad"));
+            }
+
+            // 7. BORRAR registro
+            PreparedStatement deleteStmt = con.prepareStatement("DELETE FROM persona WHERE id = ?");
+            deleteStmt.setInt(1, 2);
+            deleteStmt.executeUpdate();
+            System.out.println("Registro borrado.");
+            
+            System.out.println("Datos:");
+            while (rs.next()) {
+                System.out.println(rs.getInt("id") + " - " + rs.getString("nombre") + " - " + rs.getInt("edad"));
+            }
+
+            // 8. Confirmar transacción
+            con.commit();
+            System.out.println("Transacción confirmada.");
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            try {
+                if (con != null) {
+                    con.rollback();
+                    System.out.println("Transacción revertida.");
+                }
+            } catch (SQLException se) {
+                System.out.println("Error al revertir: " + se.getMessage());
+            }
+        } finally {
+            try {
+                if (con != null) con.close();
+                System.out.println("Conexión cerrada.");
+            } catch (SQLException se) {
+                System.out.println("Error al cerrar conexión: " + se.getMessage());
+            }
+        }
+    }
+}
+
+

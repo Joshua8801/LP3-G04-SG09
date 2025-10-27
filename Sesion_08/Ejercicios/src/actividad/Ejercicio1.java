@@ -1,0 +1,120 @@
+package actividad;
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class Ejercicio1 {
+    private static final String CLAVE_CORRECTA = "1111";
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Connection con = null;
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            con = DriverManager.getConnection("jdbc:sqlite:ejercicio.db");
+            con.setAutoCommit(false); 
+
+            while (true) {
+                System.out.println("\n--- MENÚ ---");
+                System.out.println("1. Insertar persona");
+                System.out.println("2. Mostrar personas");
+                System.out.println("3. Actualizar persona");
+                System.out.println("4. Borrar persona");
+                System.out.println("5. Salir");
+                System.out.print("Seleccione una opción: ");
+                int opcion = sc.nextInt();
+                sc.nextLine(); 
+
+                switch (opcion) {
+                    case 1 -> insertar(con, sc);
+                    case 2 -> mostrar(con);
+                    case 3 -> actualizar(con, sc);
+                    case 4 -> borrar(con, sc);
+                    case 5 -> {
+                        con.close();
+                        System.out.println("Conexión cerrada. ¡Hasta luego!");
+                        return;
+                    }
+                    default -> System.out.println("Opción inválida.");
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void insertar(Connection con, Scanner sc) throws SQLException {
+        System.out.print("ID: ");
+        int id = sc.nextInt(); sc.nextLine();
+        System.out.print("Nombre: ");
+        String nombre = sc.nextLine();
+        System.out.print("Edad: ");
+        int edad = sc.nextInt(); sc.nextLine();
+        System.out.print("Correo: ");
+        String correo = sc.nextLine();
+
+        PreparedStatement ps = con.prepareStatement("INSERT INTO persona VALUES (?, ?, ?, ?)");
+        ps.setInt(1, id);
+        ps.setString(2, nombre);
+        ps.setInt(3, edad);
+        ps.setString(4, correo);
+        ps.executeUpdate();
+
+        confirmar(con, sc);
+    }
+
+    private static void mostrar(Connection con) throws SQLException {
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM persona");
+        System.out.println("\n--- Lista de personas ---");
+        while (rs.next()) {
+            System.out.println(rs.getInt("id") + " - " + rs.getString("nombre") + " - " + rs.getInt("edad") + " - " + rs.getString("correo"));
+        }
+    }
+
+    private static void actualizar(Connection con, Scanner sc) throws SQLException {
+        System.out.print("ID de la persona a actualizar: ");
+        int id = sc.nextInt(); sc.nextLine();
+        System.out.print("Nuevo nombre: ");
+        String nombre = sc.nextLine();
+        System.out.print("Nueva edad: ");
+        int edad = sc.nextInt(); sc.nextLine();
+        System.out.print("Nuevo correo: ");
+        String correo = sc.nextLine();
+
+        PreparedStatement ps = con.prepareStatement("UPDATE persona SET nombre = ?, edad = ?, correo = ? WHERE id = ?");
+        ps.setString(1, nombre);
+        ps.setInt(2, edad);
+        ps.setString(3, correo);
+        ps.setInt(4, id);
+        ps.executeUpdate();
+
+        confirmar(con, sc);
+    }
+
+    private static void borrar(Connection con, Scanner sc) throws SQLException {
+        System.out.print("ID de la persona a borrar: ");
+        int id = sc.nextInt(); sc.nextLine();
+
+        PreparedStatement ps = con.prepareStatement("DELETE FROM persona WHERE id = ?");
+        ps.setInt(1, id);
+        ps.executeUpdate();
+
+        confirmar(con, sc);
+    }
+
+    private static void confirmar(Connection con, Scanner sc) throws SQLException {
+        System.out.print("Ingrese la clave para confirmar cambios: ");
+        String clave = sc.nextLine();
+        if (clave.equals(CLAVE_CORRECTA)) {
+            con.commit();
+            System.out.println("Cambios confirmados.");
+        } else {
+            con.rollback();
+            System.out.println("Clave incorrecta. Cambios revertidos.");
+        }
+    }
+}
+

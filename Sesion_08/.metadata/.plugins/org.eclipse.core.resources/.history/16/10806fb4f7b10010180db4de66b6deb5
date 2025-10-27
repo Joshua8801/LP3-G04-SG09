@@ -1,0 +1,47 @@
+package actividad;
+
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Connection;
+
+public class Actividad {
+    public static void main(String[] args) {
+        try {
+            // Cargar el driver de SQLite
+            Class.forName("org.sqlite.JDBC");
+
+            // Conexión a la base de datos (se crea si no existe)
+            Connection con = DriverManager.getConnection("jdbc:sqlite:ejemplo.db");
+
+            if (con != null) {
+                System.out.println("Se creó y/o abrió la base de datos.");
+            }
+
+            // Crear objeto Statement para ejecutar sentencias SQL
+            Statement stmt = con.createStatement();
+
+            // Crear la tabla
+            stmt.execute("CREATE TABLE emp (id INTEGER PRIMARY KEY, name TEXT, age INTEGER);");
+            System.out.println("Creación de tabla exitosa");
+
+            // Insertar datos
+            stmt.execute("INSERT INTO emp VALUES (3,'Pepe',44)");
+            stmt.execute("INSERT INTO emp VALUES (4,'Jose',77)");
+            System.out.println("Inserción exitosa");
+
+            // Consultar datos
+            ResultSet rs = stmt.executeQuery("SELECT * FROM emp");
+            while (rs.next()) {
+                System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getInt(3));
+            }
+
+            // Cerrar conexión
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+

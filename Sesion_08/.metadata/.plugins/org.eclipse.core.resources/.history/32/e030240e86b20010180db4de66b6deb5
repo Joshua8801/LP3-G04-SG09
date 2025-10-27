@@ -1,0 +1,136 @@
+package actividad;
+
+public class Ejercicio2 {
+
+}
+
+import java.sql.*;
+import java.util.*;
+
+public class AppConsultaAvanzada {
+    private static final String CLAVE = "1234";
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        try (Connection con = DriverManager.getConnection("jdbc:sqlite:ejercicio.db")) {
+            con.setAutoCommit(false);
+
+            while (true) {
+                System.out.println("\n--- MENÚ ---");
+                System.out.println("1. Insertar");
+                System.out.println("2. Borrar");
+                System.out.println("3. Actualizar");
+                System.out.println("4. Mostrar registros personalizados");
+                System.out.println("5. Salir");
+                System.out.print("Opción: ");
+                int op = sc.nextInt(); sc.nextLine();
+
+                switch (op) {
+                    case 1 -> insertar(con, sc);
+                    case 2 -> borrar(con, sc);
+                    case 3 -> actualizar(con, sc);
+                    case 4 -> mostrarPersonalizado(con, sc);
+                    case 5 -> { con.close(); return; }
+                    default -> System.out.println("Opción inválida.");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void insertar(Connection con, Scanner sc) throws SQLException {
+        System.out.print("ID: "); int id = sc.nextInt(); sc.nextLine();
+        System.out.print("Nombre: "); String nombre = sc.nextLine();
+        System.out.print("Edad: "); int edad = sc.nextInt(); sc.nextLine();
+        System.out.print("Correo: "); String correo = sc.nextLine();
+
+        PreparedStatement ps = con.prepareStatement("INSERT INTO persona VALUES (?, ?, ?, ?)");
+        ps.setInt(1, id); ps.setString(2, nombre); ps.setInt(3, edad); ps.setString(4, correo);
+        ps.executeUpdate();
+        confirmar(con, sc);
+    }
+
+    private static void borrar(Connection con, Scanner sc) throws SQLException {
+        System.out.print("ID a borrar: "); int id = sc.nextInt(); sc.nextLine();
+        PreparedStatement ps = con.prepareStatement("DELETE FROM persona WHERE id=?");
+        ps.setInt(1, id); ps.executeUpdate();
+        confirmar(con, sc);
+    }
+
+    private static void actualizar(Connection con, Scanner sc) throws SQLException {
+        System.out.print("ID a actualizar: "); int id = sc.nextInt(); sc.nextLine();
+        System.out.print("Nuevo nombre: "); String nombre = sc.nextLine();
+        System.out.print("Nueva edad: "); int edad = sc.nextInt(); sc.nextLine();
+        System.out.print("Nuevo correo: "); String correo = sc.nextLine();
+
+        PreparedStatement ps = con.prepareStatement("UPDATE persona SET nombre=?, edad=?, correo=? WHERE id=?");
+        ps.setString(1, nombre); ps.setInt(2, edad); ps.setString(3, correo); ps.setInt(4, id);
+        ps.executeUpdate();
+        confirmar(con, sc);
+    }
+
+    private static void confirmar(Connection con, Scanner sc) throws SQLException {
+        System.out.print("Ingrese clave para confirmar: ");
+        if (sc.nextLine().equals(CLAVE)) {
+            con.commit(); System.out.println("Cambios confirmados.");
+        } else {
+            con.rollback(); System.out.println("Clave incorrecta. Cambios revertidos.");
+        }
+    }
+
+    private static void mostrarPersonalizado(Connection con, Scanner sc) throws SQLException {
+        System.out.print("Campos a mostrar (id,nombre,edad,correo separados por coma): ");
+        List<String> campos = Arrays.asList(sc.nextLine().split(","));
+
+        System.out.print("¿Deseas aplicar una condición? (campo o ENTER): ");
+        String campoCond = sc.nextLine();
+        String valorCond = null;
+        if (!campoCond.isBlank()) {
+            System.out.print("Valor para " + campoCond + ": ");
+            valorCond = sc.nextLine();
+        }
+
+        System.out.print("¿Ordenar por algún campo? (id,nombre,edad o ENTER): ");
+        String campoOrden = sc.nextLine();
+        boolean asc = true;
+        if (!campoOrden.isBlank()) {
+            System.out.print("¿Ascendente? (true/false): ");
+            asc = Boolean.parseBoolean(sc.nextLine());
+        }
+
+        System.out.print("¿Limitar cantidad de resultados? (número o 0): ");
+        int limite = Integer.parseInt(sc.nextLine());
+
+        StringBuilder query = new StringBuilder("SELECT * FROM persona");
+        if (campoCond != null && valorCond != null && !campoCond.isBlank() && !valorCond.isBlank()) {
+            query.append(" WHERE ").append(campoCond).append(" = ?");
+        }
+        if (!campoOrden.isBlank()) {
+            query.append(" ORDER BY ").append(campoOrden).append(asc ? " ASC" : " DESC");
+        }
+        if (limite > 0) {
+            query.append(" LIMIT ").append(limite);
+        }
+
+        PreparedStatement ps = con.prepareStatement(query.toString());
+        if (query.toString().contains("WHERE")) {
+            ps.setString(1, valorCond);
+        }
+
+        ResultSet rs = ps.executeQuery();
+        System.out.println("\n--- RESULTADOS ---");
+        while (rs.next()) {
+            for (String campo : campos) {
+                switch (campo.trim()) {
+                    case "id" -> System.out.print(rs.getInt("id") + " ");
+                    case "nombre" -> System.out.print(rs.getString("nombre") + " ");
+                    case "edad" -> System.out.print(rs.getInt("edad") + " ");
+                    case "correo" -> System.out.print(rs.getString("correo") + " ");
+                }
+            }
+            System.out.println();
+        }
+    }
+}
