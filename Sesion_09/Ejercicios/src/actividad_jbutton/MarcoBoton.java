@@ -1,0 +1,42 @@
+package actividad_jbutton;
+
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.Icon;
+import javax.swing.JOptionPane;
+
+public class MarcoBoton extends JFrame {
+    private final JButton botonBotonSimple;
+    private final JButton botonBotonElegante;
+
+    public MarcoBoton() {
+        super("Prueba de botones de Hincho y Apaza");
+        setLayout(new FlowLayout());
+
+        botonBotonSimple = new JButton("Botón simple");
+        add(botonBotonSimple);
+
+        Icon insecto1 = new ImageIcon(getClass().getResource("insecto1.png"));
+        Icon insecto2 = new ImageIcon(getClass().getResource("insecto2.png"));
+        botonBotonElegante = new JButton("Botón elegante", insecto1);
+        botonBotonElegante.setRolloverIcon(insecto2);
+        add(botonBotonElegante);
+
+        ManejadorBoton manejador = new ManejadorBoton();
+        botonBotonSimple.addActionListener((ActionListener) manejador);
+        botonBotonElegante.addActionListener(manejador);
+    }
+
+    private class ManejadorBoton implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent evento) {
+            JOptionPane.showMessageDialog(MarcoBoton.this, String.format(
+                "Usted oprimió: %s", evento.getActionCommand()));
+        }
+    }
+}
