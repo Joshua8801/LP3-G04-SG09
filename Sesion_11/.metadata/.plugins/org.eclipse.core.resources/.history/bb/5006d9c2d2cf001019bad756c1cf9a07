@@ -1,0 +1,15 @@
+package strategy;
+
+public class RiegoPorClima implements RiegoStrategy {
+
+    private String clima;
+
+    public RiegoPorClima(String clima) {
+        this.clima = clima;
+    }
+
+    @Override
+    public boolean debeRegar() {
+        return !clima.equalsIgnoreCase("lluvia");
+    }
+}

@@ -1,0 +1,45 @@
+package Principal;
+
+import command.*;
+import model.SistemaRiego;
+import observer.*;
+import strategy.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        SistemaNotificaciones notificador = new SistemaNotificaciones();
+
+        UsuarioApp usuario1 = new UsuarioApp("Juan");
+        UsuarioApp usuario2 = new UsuarioApp("María");
+
+        notificador.agregarObservador(usuario1);
+        notificador.agregarObservador(usuario2);
+
+        SistemaRiego sistema = new SistemaRiego(notificador);
+
+        ControlRemoto control = new ControlRemoto();
+
+        // Probando Strategy (elige estrategia)
+        RiegoStrategy estrategia = new RiegoPorHumedad(30);
+
+        if (estrategia.debeRegar()) {
+            control.setCommand(new AbrirValvulaCommand(sistema));
+            control.presionarBoton();
+
+            control.setCommand(new IniciarRiegoCommand(sistema));
+            control.presionarBoton();
+        } else {
+            System.out.println("No es necesario regar ahora.");
+        }
+
+        // Detener riego
+        control.setCommand(new DetenerRiegoCommand(sistema));
+        control.presionarBoton();
+
+        control.setCommand(new CerrarValvulaCommand(sistema));
+        control.presionarBoton();
+    }
+}
+

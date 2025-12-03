@@ -1,0 +1,7 @@
+package observer;
+
+public class SistemaNotificaciones extends Sujeto {
+
+    // Usa directamente los métodos heredados:
+    // agregarObservador(), removerObservador() y notificar()
+}

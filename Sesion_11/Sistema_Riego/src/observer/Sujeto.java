@@ -1,0 +1,16 @@
+package observer;
+import java.util.*;
+
+public class Sujeto {
+	protected List<Observador> lista = new ArrayList<>();
+	
+	
+	public void agregar(Observador o) { lista.add(o); }
+	public void remover(Observador o) { lista.remove(o); }
+	
+	
+	public void notificar(String msg) {
+		for (Observador o : lista) o.actualizar(msg);
+	}
+}
+

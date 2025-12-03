@@ -1,0 +1,17 @@
+package command;
+
+import model.SistemaRiego;
+
+public class IniciarRiegoCommand implements Command {
+
+    private SistemaRiego sistema;
+
+    public IniciarRiegoCommand(SistemaRiego sistema) {
+        this.sistema = sistema;
+    }
+
+    @Override
+    public void ejecutar() {
+        sistema.iniciarRiego();
+    }
+}

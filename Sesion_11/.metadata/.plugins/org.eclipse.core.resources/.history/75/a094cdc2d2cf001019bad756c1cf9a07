@@ -1,0 +1,17 @@
+package command;
+
+import model.SistemaRiego;
+
+public class AbrirValvulaCommand implements Command {
+
+    private SistemaRiego sistema;
+
+    public AbrirValvulaCommand(SistemaRiego sistema) {
+        this.sistema = sistema;
+    }
+
+    @Override
+    public void ejecutar() {
+        sistema.abrirValvula();
+    }
+}

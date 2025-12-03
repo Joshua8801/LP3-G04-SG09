@@ -1,0 +1,148 @@
+package ui;
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JTextArea;
+
+//import javax.swing.*;
+//import java.awt.*;
+
+import command.*;
+import model.SistemaRiego;
+import observer.*;
+import strategy.*;
+
+public class RiegoGUI extends JFrame implements Observador {
+
+    private SistemaRiego sistema;
+    private ControlRemoto control = new ControlRemoto();
+
+    private JTextArea area;
+    private JComboBox<String> estrategias;
+    private JSlider sliderPresion;
+
+    public RiegoGUI(SistemaRiego sistema, SistemaNotificaciones notificador) {
+        this.sistema = sistema;
+        notificador.agregar(this);
+
+        setTitle("Sistema de Riego Inteligente");
+        setSize(600, 500);
+        setLayout(new BorderLayout());
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        // --------------------------
+        // PANEL DE BOTONES SUPERIOR
+        // --------------------------
+        JPanel panelBotones = new JPanel();
+        panelBotones.setLayout(new GridLayout(2, 3));
+
+        JButton btnAbrir = new JButton("Abrir Válvula");
+        JButton btnCerrar = new JButton("Cerrar Válvula");
+        JButton btnIniciar = new JButton("Iniciar Riego");
+        JButton btnDetener = new JButton("Detener Riego");
+        JButton btnAplicar = new JButton("Aplicar Estrategia");
+
+        panelBotones.add(btnAbrir);
+        panelBotones.add(btnCerrar);
+        panelBotones.add(btnIniciar);
+        panelBotones.add(btnDetener);
+        panelBotones.add(btnAplicar);
+
+        add(panelBotones, BorderLayout.NORTH);
+
+        // --------------------------
+        // LISTA DE ESTRATEGIAS
+        // --------------------------
+        estrategias = new JComboBox<>(new String[]{
+                "Riego por Humedad",
+                "Riego por Horario",
+                "Riego por Clima",
+                "Riego Predictivo"
+        });
+
+        add(estrategias, BorderLayout.SOUTH);
+
+        // --------------------------
+        // ÁREA DE NOTIFICACIONES
+        // --------------------------
+        area = new JTextArea();
+        area.setEditable(false);
+        add(new JScrollPane(area), BorderLayout.CENTER);
+
+        // --------------------------
+        // SLIDER DE PRESIÓN (10% – 100%)
+        // --------------------------
+        sliderPresion = new JSlider(10, 100, 50);
+        sliderPresion.setMajorTickSpacing(10);
+        sliderPresion.setPaintLabels(true);
+        sliderPresion.setPaintTicks(true);
+        add(sliderPresion, BorderLayout.WEST);
+
+        // --------------------------
+        // LISTENERS
+        // --------------------------
+        btnAbrir.addActionListener(e -> ejecutar(new AbrirValvulaCommand(sistema)));
+        btnCerrar.addActionListener(e -> ejecutar(new CerrarValvulaCommand(sistema)));
+        btnIniciar.addActionListener(e -> ejecutar(new IniciarRiegoCommand(sistema)));
+        btnDetener.addActionListener(e -> ejecutar(new DetenerRiegoCommand(sistema)));
+
+        btnAplicar.addActionListener(e -> aplicarEstrategia());
+
+        sliderPresion.addChangeListener(e -> {
+            int valor = sliderPresion.getValue();
+            ejecutar(new AjustarPresionCommand(sistema, valor));
+        });
+    }
+
+    // --------------------------
+    // MÉTODO PARA EJECUTAR COMMANDS
+    // --------------------------
+    private void ejecutar(Command c) {
+        control.setCommand(c);
+        control.presionar();
+    }
+
+    // --------------------------
+    // LÓGICA PARA APLICAR STRATEGY
+    // --------------------------
+    private void aplicarEstrategia() {
+
+        RiegoStrategy strat;
+
+        switch (estrategias.getSelectedIndex()) {
+            case 0:
+                strat = new RiegoPorHumedad(30);
+                break;
+            case 1:
+                strat = new RiegoPorHorario();
+                break;
+            case 2:
+                strat = new RiegoPorClima("soleado");
+                break;
+            default:
+                strat = new RiegoInteligentePredictivo(35, "nublado");
+        }
+
+        if (strat.debeRegar()) {
+            ejecutar(new AbrirValvulaCommand(sistema));
+            ejecutar(new IniciarRiegoCommand(sistema));
+        } else {
+            actualizar("La estrategia indica que NO es necesario regar.");
+        }
+    }
+
+    // --------------------------
+    // MÉTODO OBSERVER
+    // --------------------------
+    @Override
+    public void actualizar(String mensaje) {
+        area.append(mensaje + "\n");
+    }
+}

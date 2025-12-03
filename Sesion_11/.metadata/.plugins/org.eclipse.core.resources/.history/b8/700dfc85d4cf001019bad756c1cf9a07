@@ -1,0 +1,11 @@
+package strategy;
+import java.time.LocalTime;
+
+
+public class RiegoPorHorario implements RiegoStrategy {
+	@Override
+	public boolean debeRegar() {
+		LocalTime t = LocalTime.now();
+		return t.isAfter(LocalTime.of(6, 0)) && t.isBefore(LocalTime.of(8, 0));
+	}
+}

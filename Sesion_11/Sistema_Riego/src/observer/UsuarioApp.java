@@ -1,0 +1,14 @@
+package observer;
+
+public class UsuarioApp implements Observador {
+	private String nombre;
+	
+	
+	public UsuarioApp(String nombre) { this.nombre = nombre; }
+	
+	
+	@Override
+	public void actualizar(String mensaje) {
+		System.out.println(nombre + " recibió: " + mensaje);
+	}
+}

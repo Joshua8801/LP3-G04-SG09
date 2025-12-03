@@ -1,0 +1,8 @@
+package strategy;
+
+
+public class RiegoPorHumedad implements RiegoStrategy {
+	private int humedad;
+	public RiegoPorHumedad(int h) { this.humedad = h; }
+	@Override public boolean debeRegar() { return humedad < 40; }
+}
